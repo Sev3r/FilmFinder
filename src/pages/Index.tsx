@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Search, Film, Heart, Eye, Sun, Moon, Star, Plus, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,7 +15,7 @@ interface Movie {
   genre_ids: number[];
 }
 
-const TMDB_API_KEY = ''; // Users will need to add their API key
+const TMDB_API_KEY = '42a407a31ab21dca87db67cb353fefe4';
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 
