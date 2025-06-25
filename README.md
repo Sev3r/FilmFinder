@@ -3,7 +3,7 @@
 
 Een moderne, responsive web applicatie voor het zoeken en beheren van films met persoonlijke watchlists. Gebouwd met React, TypeScript en de TMDB API.
 
-## 🎬 Projectbeschrijving
+## Projectbeschrijving
 
 Deze Movie Watchlist App stelt gebruikers in staat om:
 - Films te zoeken via de TMDB (The Movie Database) API
@@ -16,7 +16,7 @@ Deze Movie Watchlist App stelt gebruikers in staat om:
 - Te schakelen tussen dark en light mode
 - De app te gebruiken op desktop, tablet en mobiele apparaten
 
-## 🚀 Gebruikte Technologieën
+## Gebruikte Technologieën
 
 - **React 18** - Voor de gebruikersinterface
 - **TypeScript** - Voor type-safe development
@@ -27,7 +27,7 @@ Deze Movie Watchlist App stelt gebruikers in staat om:
 - **YouTube Embed API** - Voor trailer integratie
 - **Vite** - Voor development en build tooling
 
-## 📦 Installatie-instructies
+## Installatie-instructies
 
 ### Vereisten
 - Node.js (versie 16 of hoger)
@@ -91,25 +91,25 @@ De TMDB API heeft rate limiting:
 ### Data Usage
 Alle API responses worden lokaal gecached waar mogelijk om de gebruikerservaring te verbeteren en API calls te minimaliseren.
 
-## ✨ Functies van de App
+## Functies van de App
 
-### 🔍 Film Zoeken
+### Film Zoeken
 - Zoek films op titel via de TMDB database
 - Bekijk populaire films bij het opstarten
 - Gedetailleerde film informatie inclusief poster, rating en releasejaar
 
-### 📝 Watchlist Beheer
+### Watchlist Beheer
 - **Want to Watch lijst:** Voeg films toe die je wilt bekijken
 - **Watched lijst:** Markeer films als bekeken
 - Automatische verwijdering uit watchlist wanneer gemarkeerd als bekeken
 - Lokale opslag - geen account vereist
 
-### 🎯 Gepersonaliseerde Suggesties
+### Gepersonaliseerde Suggesties
 - Suggesties gebaseerd op genres van bekeken films
 - Intelligente aanbevelingen met hoge ratings
 - Automatische updates wanneer nieuwe films worden bekeken
 
-### 🎬 **Gedetailleerde Film Popup**
+### **Gedetailleerde Film Popup**
 - **Klik op een film** om een uitgebreide popup te openen
 - **Filmachtergrond en poster** - Visueel aantrekkelijke weergave
 - **Basisinformatie** - Releasejaar, speelduur, en IMDb-rating
@@ -117,31 +117,31 @@ Alle API responses worden lokaal gecached waar mogelijk om de gebruikerservaring
 - **Volledige samenvatting** - Uitgebreide filmomschrijving
 - **Interactieve knoppen** - Direct toevoegen aan lijsten vanuit popup
 
-### 🎥 **Trailer Integratie**
+### **Trailer Integratie**
 - **YouTube trailers** direct in de popup afspelen
 - **Volledige audio-ondersteuning** - Klik op play voor geluid
 - **HD-kwaliteit** trailers waar beschikbaar
 - **Automatische trailer detectie** - Alleen officiële trailers worden getoond
 - **Responsive video player** - Werkt op alle apparaten
 
-### 🌙 Dark/Light Mode
+### Dark/Light Mode
 - Volledig themeable interface
 - Automatische detectie van systeemvoorkeur
 - Smooth overgangen tussen thema's
 
-### 📱 Responsive Design
+### Responsive Design
 - **Mobile-first** ontwerp
 - Optimaal voor smartphones (320px+)
 - Tablet ondersteuning (768px+)
 - Desktop ervaring (1024px+)
 - Touch-friendly interface elementen
 
-### 💾 Data Persistentie
+### Data Persistentie
 - LocalStorage voor offline functionaliteit
 - Geen account registratie vereist
 - Data blijft behouden tussen sessies
 
-### 🎨 Gebruikersinterface
+### Gebruikersinterface
 - Moderne, intuïtieve interface
 - Hover effecten en smooth animaties
 - Card-based movie display
@@ -149,7 +149,7 @@ Alle API responses worden lokaal gecached waar mogelijk om de gebruikerservaring
 - Sticky navigation header
 - Loading states en error handling
 
-## 🔧 Development
+## Development
 
 ### Project Structuur
 ```
@@ -167,24 +167,24 @@ src/
 - `npm run build` - Build voor productie
 - `npm run preview` - Preview productie build
 
-## 🆕 Recente Updates
+## Recente Updates
 
 ### Versie 2.0 - Uitgebreide Film Details
-- ✅ **Film Details Popup** - Volledig nieuwe modal interface
-- ✅ **Trailer Integratie** - YouTube trailers met audio
-- ✅ **Verbeterde UI** - Backdrop afbeeldingen en betere lay-out
-- ✅ **Genre Weergave** - Kleurgecodeerde genre tags
-- ✅ **Runtime Display** - Speelduur in uur:minuut formaat
+- **Film Details Popup** - Volledig nieuwe modal interface
+- **Trailer Integratie** - YouTube trailers met audio
+- **Verbeterde UI** - Backdrop afbeeldingen en betere lay-out
+- **Genre Weergave** - Kleurgecodeerde genre tags
+- **Runtime Display** - Speelduur in uur:minuut formaat
 
 ### Versie 1.0 - Basis Functionaliteit
-- ✅ TMDB API integratie
-- ✅ Film zoeken en weergave
-- ✅ Watchlist management
-- ✅ Dark/light mode
-- ✅ Responsive design
-- ✅ Lokale data opslag
+- TMDB API integratie
+- Film zoeken en weergave
+- Watchlist management
+- Dark/light mode
+- Responsive design
+- Lokale data opslag
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Veelvoorkomende Problemen
 
@@ -210,31 +210,8 @@ src/
    - Controleer of popups niet geblokkeerd zijn in je browser
    - Refresh de pagina als er JavaScript errors zijn
 
-## 🚀 Toekomstige Uitbreidingen
 
-### Geplande Features
-- **User Authentication** - Supabase integratie voor cross-device sync
-- **Movie Reviews** - Gebruikersreviews en ratings
-- **Advanced Filtering** - Filter op genre, jaar, rating, etc.
-- **Watchlist Export** - Export naar verschillende formaten
-- **Social Features** - Deel watchlists met vrienden
-- **Offline Mode** - Cached data voor offline gebruik
-
-### Technische Verbeteringen
-- **Code Refactoring** - Index.tsx opsplitsen in kleinere componenten
-- **Performance** - Lazy loading en virtualization
-- **Testing** - Unit en integration tests
-- **CI/CD** - Automated testing en deployment
-
-## 📄 Licentie
+## Licentie
 
 Dit project is gebouwd voor educatieve doeleinden. TMDB API data is eigendom van The Movie Database.
 
-## 🤝 Bijdragen
-
-Bijdragen zijn welkom! Open een issue of pull request voor verbeteringen.
-
----
-
-**Gemaakt met ❤️ en veel koffie ☕**
-**Nu met 🎬 trailers en uitgebreide filmdetails!**
