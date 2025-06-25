@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Film, Heart, Eye, Sun, Moon, Star, Plus, Check, X } from 'lucide-react';
+import { Search, Film, Heart, Eye, Sun, Moon, Star, Plus, Check, X, Play, Calendar, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 
 interface Movie {
@@ -13,11 +14,28 @@ interface Movie {
   release_date: string;
   vote_average: number;
   genre_ids: number[];
+  backdrop_path?: string;
+  runtime?: number;
+}
+
+interface MovieDetails extends Movie {
+  genres: { id: number; name: string; }[];
+  runtime: number;
+  production_companies: { name: string; }[];
+  spoken_languages: { english_name: string; }[];
+}
+
+interface VideoResult {
+  key: string;
+  name: string;
+  type: string;
+  site: string;
 }
 
 const TMDB_API_KEY = '42a407a31ab21dca87db67cb353fefe4';
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
+const BACKDROP_BASE_URL = 'https://image.tmdb.org/t/p/w1280';
 
 const Index = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -28,6 +46,10 @@ const Index = () => {
   const [watchedList, setWatchedList] = useState<Movie[]>([]);
   const [currentPage, setCurrentPage] = useState('search');
   const [suggestions, setSuggestions] = useState<Movie[]>([]);
+  const [selectedMovie, setSelectedMovie] = useState<MovieDetails | null>(null);
+  const [movieVideos, setMovieVideos] = useState<VideoResult[]>([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [loadingDetails, setLoadingDetails] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -136,6 +158,40 @@ const Index = () => {
     }
   };
 
+  const fetchMovieDetails = async (movieId: number) => {
+    setLoadingDetails(true);
+    try {
+      // Fetch movie details
+      const detailsResponse = await fetch(
+        `${TMDB_BASE_URL}/movie/${movieId}?api_key=${TMDB_API_KEY}`
+      );
+      const movieDetails = await detailsResponse.json();
+
+      // Fetch movie videos (trailers)
+      const videosResponse = await fetch(
+        `${TMDB_BASE_URL}/movie/${movieId}/videos?api_key=${TMDB_API_KEY}`
+      );
+      const videosData = await videosResponse.json();
+      
+      // Filter for trailers from YouTube
+      const trailers = videosData.results?.filter(
+        (video: VideoResult) => video.type === 'Trailer' && video.site === 'YouTube'
+      ) || [];
+
+      setSelectedMovie(movieDetails);
+      setMovieVideos(trailers);
+      setIsDialogOpen(true);
+    } catch (error) {
+      console.error('Error fetching movie details:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch movie details.",
+        variant: "destructive"
+      });
+    }
+    setLoadingDetails(false);
+  };
+
   const addToWatchList = (movie: Movie) => {
     if (watchList.find(m => m.id === movie.id)) {
       toast({
@@ -201,13 +257,19 @@ const Index = () => {
     });
   };
 
+  const formatRuntime = (minutes: number) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours}h ${mins}m`;
+  };
+
   const MovieCard = ({ movie }: { movie: Movie }) => {
     const isInWatchList = watchList.find(m => m.id === movie.id);
     const isWatched = watchedList.find(m => m.id === movie.id);
 
     return (
-      <Card className="group hover:scale-105 transition-all duration-300 bg-card border-border overflow-hidden">
-        <div className="relative">
+      <Card className="group hover:scale-105 transition-all duration-300 bg-card border-border overflow-hidden cursor-pointer">
+        <div className="relative" onClick={() => fetchMovieDetails(movie.id)}>
           <img
             src={movie.poster_path ? `${IMAGE_BASE_URL}${movie.poster_path}` : '/placeholder.svg'}
             alt={movie.title}
@@ -219,7 +281,10 @@ const Index = () => {
                 <Button
                   size="sm"
                   variant={isInWatchList ? "secondary" : "default"}
-                  onClick={() => isInWatchList ? removeFromWatchList(movie.id) : addToWatchList(movie)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    isInWatchList ? removeFromWatchList(movie.id) : addToWatchList(movie);
+                  }}
                   className="backdrop-blur-sm"
                 >
                   {isInWatchList ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
@@ -228,7 +293,10 @@ const Index = () => {
               <Button
                 size="sm"
                 variant={isWatched ? "secondary" : "default"}
-                onClick={() => isWatched ? removeFromWatchedList(movie.id) : addToWatchedList(movie)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  isWatched ? removeFromWatchedList(movie.id) : addToWatchedList(movie);
+                }}
                 className="backdrop-blur-sm"
               >
                 {isWatched ? <X className="w-4 h-4" /> : <Check className="w-4 h-4" />}
@@ -444,6 +512,150 @@ const Index = () => {
         <main className="container mx-auto px-4 py-8">
           {renderContent()}
         </main>
+
+        {/* Movie Details Dialog */}
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            {loadingDetails ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full"></div>
+              </div>
+            ) : selectedMovie ? (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="text-2xl font-bold">{selectedMovie.title}</DialogTitle>
+                </DialogHeader>
+                
+                <div className="space-y-6">
+                  {/* Movie backdrop and poster */}
+                  <div className="relative">
+                    {selectedMovie.backdrop_path && (
+                      <img
+                        src={`${BACKDROP_BASE_URL}${selectedMovie.backdrop_path}`}
+                        alt={selectedMovie.title}
+                        className="w-full h-64 object-cover rounded-lg"
+                      />
+                    )}
+                    <div className="absolute -bottom-16 left-4 hidden md:block">
+                      <img
+                        src={selectedMovie.poster_path ? `${IMAGE_BASE_URL}${selectedMovie.poster_path}` : '/placeholder.svg'}
+                        alt={selectedMovie.title}
+                        className="w-32 h-48 object-cover rounded-lg border-4 border-background shadow-lg"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Movie details */}
+                  <div className="md:ml-40 space-y-4">
+                    <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                      {selectedMovie.release_date && (
+                        <div className="flex items-center gap-1">
+                          <Calendar className="w-4 h-4" />
+                          <span>{new Date(selectedMovie.release_date).getFullYear()}</span>
+                        </div>
+                      )}
+                      {selectedMovie.runtime && (
+                        <div className="flex items-center gap-1">
+                          <Clock className="w-4 h-4" />
+                          <span>{formatRuntime(selectedMovie.runtime)}</span>
+                        </div>
+                      )}
+                      <div className="flex items-center gap-1">
+                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                        <span>{selectedMovie.vote_average.toFixed(1)}/10</span>
+                      </div>
+                    </div>
+
+                    {/* Genres */}
+                    {selectedMovie.genres && selectedMovie.genres.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {selectedMovie.genres.map(genre => (
+                          <span
+                            key={genre.id}
+                            className="px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm"
+                          >
+                            {genre.name}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Overview */}
+                    <div>
+                      <h3 className="text-lg font-semibold mb-2">Overview</h3>
+                      <p className="text-muted-foreground leading-relaxed">
+                        {selectedMovie.overview || 'No overview available.'}
+                      </p>
+                    </div>
+
+                    {/* Action buttons */}
+                    <div className="flex gap-2 pt-4">
+                      {!watchedList.find(m => m.id === selectedMovie.id) && (
+                        <Button
+                          variant={watchList.find(m => m.id === selectedMovie.id) ? "secondary" : "default"}
+                          onClick={() => {
+                            const movie = selectedMovie as Movie;
+                            watchList.find(m => m.id === movie.id) 
+                              ? removeFromWatchList(movie.id)
+                              : addToWatchList(movie);
+                          }}
+                        >
+                          {watchList.find(m => m.id === selectedMovie.id) ? (
+                            <>
+                              <X className="w-4 h-4 mr-2" />
+                              Remove from Watchlist
+                            </>
+                          ) : (
+                            <>
+                              <Plus className="w-4 h-4 mr-2" />
+                              Add to Watchlist
+                            </>
+                          )}
+                        </Button>
+                      )}
+                      <Button
+                        variant={watchedList.find(m => m.id === selectedMovie.id) ? "secondary" : "default"}
+                        onClick={() => {
+                          const movie = selectedMovie as Movie;
+                          watchedList.find(m => m.id === movie.id)
+                            ? removeFromWatchedList(movie.id)
+                            : addToWatchedList(movie);
+                        }}
+                      >
+                        {watchedList.find(m => m.id === selectedMovie.id) ? (
+                          <>
+                            <X className="w-4 h-4 mr-2" />
+                            Remove from Watched
+                          </>
+                        ) : (
+                          <>
+                            <Check className="w-4 h-4 mr-2" />
+                            Mark as Watched
+                          </>
+                        )}
+                      </Button>
+                    </div>
+
+                    {/* Trailer */}
+                    {movieVideos.length > 0 && (
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3">Trailer</h3>
+                        <div className="aspect-video">
+                          <iframe
+                            src={`https://www.youtube.com/embed/${movieVideos[0].key}`}
+                            title={movieVideos[0].name}
+                            className="w-full h-full rounded-lg"
+                            allowFullScreen
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </>
+            ) : null}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
