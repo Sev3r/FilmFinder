@@ -642,12 +642,16 @@ const Index = () => {
                         <h3 className="text-lg font-semibold mb-3">Trailer</h3>
                         <div className="aspect-video">
                           <iframe
-                            src={`https://www.youtube.com/embed/${movieVideos[0].key}`}
+                            src={`https://www.youtube.com/embed/${movieVideos[0].key}?autoplay=0&mute=0&controls=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1`}
                             title={movieVideos[0].name}
                             className="w-full h-full rounded-lg"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             allowFullScreen
                           />
                         </div>
+                        <p className="text-sm text-muted-foreground mt-2">
+                          Klik op de afspeelknop om de trailer met geluid af te spelen
+                        </p>
                       </div>
                     )}
                   </div>
